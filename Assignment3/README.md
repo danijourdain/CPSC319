@@ -3,6 +3,7 @@
 ## This file contains instructions on how to run the code files for Assignment 3.
 
 In order to successfully run the main version of this program (Binary Search Tree):
+
     1) Use the command-line/terminal of your machine to navigate to the folder where this README file was found.
         - Ensure all code files remain in this folder, otherwise there will be issues.
         - Ensure the input text file to be used is also placed in this folder
