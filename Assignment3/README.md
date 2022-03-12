@@ -18,7 +18,7 @@ In order to successfully run the main version of this program (Binary Search Tre
             encounter an error and terminate
 
 In order to successfully run the AVL Tree version of this program:
-    * has not been implemented yet *
+    *has not been implemented yet*
 
 This program does not use any packages or external libraries, so there is no need for special commands to 
 be entered. As long as the commands mentioned above are used, the program should run successfully.
