@@ -1,21 +1,12 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.regex.*;
 
-
 public class Assign3 {
-    /**
-     * This main uses command-line arguments from the user to dictate how the program will run.
-     * @param args  Command-line arguments. The user should enter two arguments, where both 
-     *              are text file names otherwise the program will encounter an error and terminate.
-     */
     public static void main(String[] args) {
         if(args.length != 2) {
-            System.out.println("Invalid number of command-line arguments. Program terminating");
-            System.exit(0);
-            //if the user doesn't enter 2 command-line arguments, program will terminate
+            System.out.println("Invalid number of command-line arguments! Program terminating");
+            System.exit(1);
+            //check if the user entered the right number of command-line arguments
         }
 
         String inputFile = checkTXT(args[0]);
@@ -23,22 +14,29 @@ public class Assign3 {
         //check to see if both command-line arguments are valid
 
         String[] inputData = readFile(inputFile);
-        //read the data from the input file into a string array
 
         BinarySearchTree tree = new BinarySearchTree();
 
+        System.out.println("Inserting and deleting elements...");
         for(String item: inputData) {
             checkOperation(item, tree);
         }
+
+        System.out.println("\nPrinting tree contents...");
+        tree.inOrder(tree.getRoot());
+        //print out the contents of the tree using depth-first, in order traversal
+
+        System.out.println("\nWriting to output file...");
+        writeFile(outputFile, tree, inputData.length);
     }
-    
+
     /**
-     * This method takes a filename and checks the extension on it to ensure it is a valid text file.
-     * @param fileName The filename to check.
-     * @return The filename if it is valid, otherwise the program will terminate.
+     * This method takes a filename as an input and checks if it is a valid text file by checking the extension on the file.
+     * @param filename The filename to check.
+     * @return The filename if it is valid, otherwise the program will encounter an error and terminate.
      */
-    public static String checkTXT(String fileName) {
-        String txt = fileName.substring(fileName.length() - 4);
+    public static String checkTXT(String filename) {
+        String txt = filename.substring(filename.length() - 4);
         //create a substring of the last 4 characters of the string
 
         if(txt.equals(".txt") == false) {
@@ -46,14 +44,13 @@ public class Assign3 {
             System.exit(1);
         }
 
-        return fileName;
+        return filename;
     }
 
     /**
-     * This method takes a filename and reads the data into a String array where 
-     * each line in the text file is an element of the array.
-     * @param fileName The file to read the data from.
-     * @return The data organized into a String array.
+     * This method takes a filename and reads the data into a string array, where each line of the text file is an element in the array.
+     * @param fileName The input filename to read from.
+     * @return A string array containing each line of the file as an element.
      */
     public static String[] readFile(String fileName) {
         /* code for reading from a text file adapted 
@@ -91,21 +88,24 @@ public class Assign3 {
         return dataArray;
     }
 
+    /**
+     * This function takes a string that contains an opcode, then some student data and performs the appropriate operation on that data.
+     * @param item The String containing an opcode and data.
+     * @param tree The binary search tree that the data will be added to or removed from
+     */
     public static void checkOperation(String item, BinarySearchTree tree) {
         Pattern regex = Pattern.compile("([ID]{1})(.{41})");
         Matcher match = regex.matcher(item);
         match.find();
+        //separate the text file into two parts: the operation code and the data
         
         if(match.group(1).equals("I")) {
-            System.out.println("Inserting element...");
             tree.insert(match.group(2));
             //use insert to create a new node with the data
-
-
         }
         else if(match.group(1).equals("D")) {
-            System.out.println("Deleting element...");
-            String key = Data.findLastName(match.group(2));
+            String key = Data.getLastName(match.group(2));
+            tree.delete(key);
         }
         else {
             System.out.println("Invalid operation code. Program terminating.");
@@ -114,4 +114,16 @@ public class Assign3 {
         }
     }
 
+    public static void writeFile(String fileName, BinarySearchTree tree, int maxSize) {
+        String result = tree.breadthFirst(maxSize);
+        //use the breadthFirst traversal method to go to the nodes in the appropriate order
+
+        try{
+            FileWriter writer = new FileWriter(fileName);
+            writer.write(result + "  ");
+            writer.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

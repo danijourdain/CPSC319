@@ -1,22 +1,16 @@
 public class Node {
     private Data data;
-    private Node left;
-    private Node right;
-    private Node parent;
+    private Node left, right, parent;
 
     /**
-     * Constructor for the Node. Sets the child nodes to null.
-     * @param number Student number.
-     * @param lastName Student last name.
-     * @param department Student department.
-     * @param program Student program.
-     * @param year Student year.
+     * Constructor for the Node
+     * @param data The data to be added to the Node.
      */
-    public Node(String data) {
+    public Node(String data, Node parent, Node left, Node right) {
         this.data = new Data(data);
-        this.left = null;
-        this.right = null;
-        this.parent = null;
+        this.left = left;
+        this.right = right;
+        this.parent = parent;
     }
 
     /**
@@ -25,6 +19,14 @@ public class Node {
     public void printNode() {
         this.data.printData();
     }
+
+    /**
+     * This method gets the data stored in a Node as a formatted string.
+     * @return the formatted data as a string.
+     */
+    public String getNodeData() {
+        return this.data.getData();
+    }
     
     /**
      * Getter method for Node data.
@@ -32,6 +34,14 @@ public class Node {
      */
     public Data getData() {
         return this.data;
+    }
+
+    /**
+     * Getter method for last name in the Node's data. This method was added since this value is frequently needed.
+     * @return The lastName String in the Data.
+     */
+    public String getLastName() {
+        return this.data.getLastName();
     }
 
     /**
@@ -81,4 +91,5 @@ public class Node {
     public void setParent(Node newParent) {
         this.parent = newParent;
     }
+    
 }
