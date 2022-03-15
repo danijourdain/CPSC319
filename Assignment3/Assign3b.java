@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.regex.*;
 
-public class Assign3 {
+public class Assign3b {
     public static void main(String[] args) {
         if(args.length != 3) {
             System.out.println("Invalid number of command-line arguments! Program terminating");
@@ -15,27 +15,25 @@ public class Assign3 {
         //check to see all both command-line arguments are valid
 
         String[] inputData = readFile(inputFile);
-        //read the data from the input file into a String array
+        //read the data into a String array
 
-        BinarySearchTree tree = new BinarySearchTree();
+        AVLTree tree = new AVLTree();
 
-        System.out.println("Inserting and deleting elements...");
+        System.out.println("Inserting elements...");
         for(String item: inputData) {
             checkOperation(item, tree);
         }
-        //add the data to/delete the data from the tree for each record
+        //insert all elements into the AVL tree
 
         System.out.println("\nTraversing tree in order...");
         String result = tree.inOrder(tree.getRoot());
         writeFile(outputFile1, result);
-        //print the content of the tree using a depth-first, in order traversal, 
-            //then write this string to a text file.
+        //perform a depth-first, in order traversal, then print those results and write them to a text file
 
         System.out.println("\nTraversing tree breadth first...");
         result = tree.breadthFirst(inputData.length);
         writeFile(outputFile2, result);
-        //print the content of the tree using a breadth-first, traversal, 
-            //then write this string to a text file.
+        //perform a breadth-first traversal, then print those results and write them to a text file
     }
 
     /**
@@ -101,7 +99,7 @@ public class Assign3 {
      * @param item The String containing an opcode and data.
      * @param tree The binary search tree that the data will be added to or removed from
      */
-    public static void checkOperation(String item, BinarySearchTree tree) {
+    public static void checkOperation(String item, AVLTree tree) {
         Pattern regex = Pattern.compile("([ID]{1})(.{41})");
         Matcher match = regex.matcher(item);
         match.find();
@@ -111,10 +109,6 @@ public class Assign3 {
             tree.insert(match.group(2));
             //use insert to create a new node with the data
         }
-        else if(match.group(1).equals("D")) {
-            String key = Data.getLastName(match.group(2));
-            tree.delete(key);
-        }
         else {
             System.out.println("Invalid operation code. Program terminating.");
             System.exit(1);
@@ -123,8 +117,8 @@ public class Assign3 {
     }
 
     /**
-     * This method takes a string and filename and writes the string to the text file.
-     * @param fileName The name of the file to be written to.
+     * This method writes a String to a text file.
+     * @param fileName The output text file.
      * @param result The String to be written to the file.
      */
     public static void writeFile(String fileName, String result) {

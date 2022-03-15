@@ -28,14 +28,6 @@ public class Data {
             System.exit(1);
         }
     }
-    
-    /**
-     * This method prints all the elements of a Data instance
-     */
-    public void printData() {
-        System.out.println (this.lastName + ", " + this.number + ", " + 
-            this.department + ", " + this.program + ", " + this.year);
-    }
 
     /**
      * This method returns all the elements of a Data instance.

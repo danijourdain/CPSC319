@@ -13,7 +13,7 @@ public class BinarySearchTree {
     }
 
     /**
-     * Insertion function for the binary search tree.
+     * Insertion function for the binary search tree. Adds a new node to the tree with the data included in data.
      * @param data The data to be added to a new node in the tree.
      */
     public void insert(String data) {
@@ -54,8 +54,8 @@ public class BinarySearchTree {
     }
 
     /**
-     * This method will take a key and delete the node associated with that key
-     * @param key The last name of the node to be deleted
+     * This method will take a key and delete the node associated with that key.
+     * @param key The last name of the node to be deleted.
      */
     public void delete(String key) {
         /* Code for deleting a node based off of descriptions from Feb 18 Lecture Notes */
@@ -143,6 +143,7 @@ public class BinarySearchTree {
      */
     private Node minNode(Node start) {
         /* Code for minNode adapted from geeksforgeeks.org/binary-search-tree-set-2-delete/ */
+
         while(start.getLeft() != null) {
             start = start.getLeft();
         }
@@ -151,10 +152,10 @@ public class BinarySearchTree {
     }
 
     /**
-     * This method searches for a Node in a binary search tree
-     * @param current The node to start searching from
-     * @param key The value to search for
-     * @return The node where the key was found, or if it does not exist, return null
+     * This method searches for a Node in a binary search tree.
+     * @param current The node to start searching from.
+     * @param key The value to search for.
+     * @return The node where the key was found, or if it does not exist, return null.
      */
     private Node search(Node current, String key) {
         /* Code for searching taken from Feb 18 lecture notes, slide 38 */
@@ -175,19 +176,31 @@ public class BinarySearchTree {
     }
 
     /**
-     * This method traverses the tree depth-first in-order and prints the results .
-     * @param current The node to start at.
+     * This method traverses the binary search tree depth-first, in order and stores the result in a string.
+     * @param current The node to begin the traversal at.
+     * @return The results of the depth-first traversal of the tree where each node's data is on its own line.
      */
-    public void inOrder(Node current) {
+    public String inOrder(Node current) {
         /* Depth-first, in order traversal adapted from slide 27 of Feb 16 lecture notes */
 
+        StringBuilder result = new StringBuilder();
+
         if(current != null) {
-            inOrder(current.getLeft());
+            result.append(inOrder(current.getLeft()));
+            //check the left node
 
-            current.printNode();
+            result.append(current.getNode() + "\n");
+            //add the current node
 
-            inOrder(current.getRight());
+            result.append(inOrder(current.getRight()));
+            //check the right node
+
+            return result.toString();
+            //convert the StringBuilder to a String and return
         }
+
+        return "";
+        //if the current node is null, return an empty string
     }
 
     /**
@@ -202,11 +215,14 @@ public class BinarySearchTree {
         StringBuilder result = new StringBuilder();
 
         queue.enqueue(this.root);
+        //add the root to the queue
 
         while(queue.isEmpty() == false) {
             Node temp = queue.dequeue();
+            //take the first element out of the queue
 
             result.append(temp.getNodeData() + "\n");
+            //add the current element's data to the result 
 
             if(temp.getLeft() != null) {
                 queue.enqueue(temp.getLeft());
@@ -214,6 +230,7 @@ public class BinarySearchTree {
             if(temp.getRight() != null) {
                 queue.enqueue(temp.getRight());
             }
+            //add the children to the queue if they exist
         }
 
         return result.toString();

@@ -1,10 +1,16 @@
 public class Node {
     private Data data;
     private Node left, right, parent;
+    private int balance = 0;
+    //this Node class is used for both Binary Search Tree and AVL Tree implementations
+        //when it is used for the BST, the balance field is simply ignored
 
     /**
-     * Constructor for the Node
+     * The main constructor for the Node class.
      * @param data The data to be added to the Node.
+     * @param parent the parent node of the new node.
+     * @param left the left child node of the new node.
+     * @param right the right child node of the new node.
      */
     public Node(String data, Node parent, Node left, Node right) {
         this.data = new Data(data);
@@ -14,10 +20,21 @@ public class Node {
     }
 
     /**
-     * This method prints the data stored in a node.
+     * Secondary constructor for the Node class. Sets all Node pointers to null.
+     * @param data The data to be added to the node.
      */
-    public void printNode() {
-        this.data.printData();
+    public Node(String data) {
+        this.data = new Data(data);
+        this.left = null;
+        this.right = null;
+        this.parent = null;
+    }
+
+    /**
+     * This method returns the data stored in a node.
+     */
+    public String getNode() {
+        return this.data.getData();
     }
 
     /**
@@ -69,6 +86,22 @@ public class Node {
     }
 
     /**
+     * Getter method for the balance field.
+     * @return The current balance value of the node.
+     */
+    public int getBalance() {
+        return this.balance;
+    }
+
+    /**
+     * Setter method for the data variable.
+     * @param data The new data for the node.
+     */
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    /**
      * Setter method for right child node.
      * @param newRight new right child node.
      */
@@ -90,6 +123,14 @@ public class Node {
      */
     public void setParent(Node newParent) {
         this.parent = newParent;
+    }
+
+    /**
+     * Setter method for the balance of the node.
+     * @param balance The new balance value for the node.
+     */
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
     
 }
