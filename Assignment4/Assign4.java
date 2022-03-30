@@ -6,7 +6,7 @@ public class Assign4 {
      * @param args Command-line arguments used to indicate input and output files
      */
     public static void main(String[] args) {
-        if(args.length != 4) {
+        if(args.length < 4 || args.length > 5) {
             System.out.println("Invalid number of command-line arguments. Program terminating.");
             System.exit(1);
         }
@@ -18,7 +18,20 @@ public class Assign4 {
                 System.exit(1);
         }
         //check each of the command-line arguments to see if they are valid filenames
-        
+
+        if(args.length == 4) {
+            regularMain(args);
+        }
+        else {
+            dijkstraMain(args);
+        }
+    }
+
+    /**
+     * Helper method to run the regular version of the assignment.
+     * @param args Command-line arguments
+     */
+    public static void regularMain(String[] args) {
         String adjacencyFile = args[0];
         String queryFile = args[1];
         String depthFirstFile = args[2];
@@ -35,13 +48,48 @@ public class Assign4 {
         StringBuilder bfsResult = new StringBuilder();
 
         for(int i = 0; i < query.length; i++) {
-            dfsResult.append(graph.DepthFirstSearch(query[i][0], query[i][1]) + "\n");
-            bfsResult.append(graph.BreadthFirstSearch(query[i][0], query[i][1]) + "\n");
+            dfsResult.append(graph.depthFirstSearch(query[i][0], query[i][1]) + "\n");
+            bfsResult.append(graph.breadthFirstSearch(query[i][0], query[i][1]) + "\n");
             //traverse the graph using both depth-first and breadth-first searches for each query
         }
 
         writeFile(depthFirstFile, dfsResult.toString());
         writeFile(breadthFirstFile, bfsResult.toString());
+        //save the results to two text files
+    }
+
+    /**
+     * Helper method to run the bonus version of the assignment.
+     * @param args Command-line arguments.
+     */
+    public static void dijkstraMain(String[] args) {
+        String adjacencyFile = args[0];
+        String queryFile = args[1];
+        String depthFirstFile = args[2];
+        String breadthFirstFile = args[3];
+        String dijkstraFile = args[4];
+        //extract all the text file names if they are all valid
+
+        int[][] adjacencyMatrix = readAdjacencyFile(adjacencyFile);
+        int[][] query = readQuery(queryFile);
+        //use helper methods to read the two input files
+
+        Graph graph = new Graph(adjacencyMatrix);
+
+        StringBuilder dfsResult = new StringBuilder();
+        StringBuilder bfsResult = new StringBuilder();
+        StringBuilder dijkstraResult = new StringBuilder();
+
+        for(int i = 0; i < query.length; i++) {
+            dfsResult.append(graph.depthFirstSearch(query[i][0], query[i][1]) + "\n");
+            bfsResult.append(graph.breadthFirstSearch(query[i][0], query[i][1]) + "\n");
+            dijkstraResult.append(graph.dijkstraSearch(query[i][0], query[i][1]) + "\n");
+            //traverse the graph using both depth-first and breadth-first searches for each query
+        }
+
+        writeFile(depthFirstFile, dfsResult.toString());
+        writeFile(breadthFirstFile, bfsResult.toString());
+        writeFile(dijkstraFile, dijkstraResult.toString());
         //save the results to two text files
     }
     
@@ -90,7 +138,7 @@ public class Assign4 {
             while((s = reader.readLine()) != null) {
                 String[] line = s.split("\t");
                 for(int j = 0; j < lines; j++) {
-                    matrix[i][j] = Integer.parseInt(line[j]);
+                    matrix[i][j] = Integer.parseInt(line[j].trim());
                     //read the contents of each line of the text file into one of the inner arrays
                 }
                 i++;
