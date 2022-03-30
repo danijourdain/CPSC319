@@ -19,7 +19,7 @@ public class Graph {
      * @param end The desired end node.
      * @return A String containing a list of nodes to visit to reach the end one. If no path exists, will return -1 instead.
      */
-    public String DepthFirstSearch(int start, int end) {
+    public String depthFirstSearch(int start, int end) {
         if(start == end) {
             return String.valueOf(start);
         }
@@ -61,7 +61,7 @@ public class Graph {
         visited[start] = true;
 
         for(int j = 0; j < this.numVertices; j++) {
-            if(this.adjacencyMatrix[start][j] != 0 && visited[j] == false) {
+            if(this.adjacencyMatrix[start][j] > 0 && visited[j] == false) {
                 //if there is a path between start and j, and j has not been visited, visit it
                 String result = dfs(j, end, visited);
 
@@ -82,7 +82,7 @@ public class Graph {
      * @param end desired end node.
      * @return A String representing a list of nodes to visit to reach the end if a path is found. Otherwise returns the start and end nodes separated by a -1.
      */
-    public String BreadthFirstSearch(int start, int end) {
+    public String breadthFirstSearch(int start, int end) {
         /* breadth-first search adapted from March 23 tutorial */
 
         Queue queue = new Queue(this.numVertices);
@@ -102,7 +102,7 @@ public class Graph {
             visited[v] = true;
 
             for(int u = 0; u < this.numVertices; u++) {
-                if(this.adjacencyMatrix[v][u] == 1 && !(visited[u])) {
+                if(this.adjacencyMatrix[v][u] > 0 && !(visited[u])) {
                     //if u is a neighbour of v and it hasn't been visited, visit it an add it to the queue
                     queue.enqueue(u);
                     visited[u] = true;
@@ -153,5 +153,62 @@ public class Graph {
 
         result.delete(result.length() - 2, result.length());
         return result.toString();
+    }
+
+    /**
+     * This method searches for the fastest path through a directed graph
+     * @param start The node to begin the search at.
+     * @param end The node to end the search.
+     * @return A string containing the path, if one was found, otherwise returns the start and end nodes separated by -1.
+     */
+    public String dijkstraSearch(int start, int end) {
+        /* Dijkstra's algorithm adapted from March 29 tutorial */
+
+        int[] currDist = new int[this.numVertices];
+        boolean[] toBeChekced = new boolean[this.numVertices];
+        int[] previous = new int[this.numVertices];
+
+        for(int i = 0; i < this.numVertices; i++) {
+            currDist[i] = Integer.MAX_VALUE;
+            toBeChekced[i] = true;
+            previous[i] = -1;
+            //initialize the values in all the arrays
+        }
+
+        currDist[start] = 0;
+        int numChecked = 0;
+        //set the distance to the starting vertex to 0
+
+        while(numChecked < this.numVertices) {
+            int min = Integer.MAX_VALUE;
+            int v = -1;
+            for(int i = 0; i < this.numVertices; i++) {
+                if(currDist[i] < min && toBeChekced[i]) {
+                    min = currDist[i];
+                    v = i;
+                    //find the unchecked node with the smallest distance 
+                }
+            }
+            
+            if(v == -1) {
+                break;
+                //if no minimum was found, there is no path between the nodes, so break the loop
+            }
+
+            toBeChekced[v] = false;
+            numChecked++;
+
+            for(int u = 0; u < this.numVertices; u++) {
+                if(this.adjacencyMatrix[v][u] > 0 && toBeChekced[u]) {
+                    if(currDist[u] > (currDist[v] + this.adjacencyMatrix[v][u])) {
+                        //if a shorter path has been found, update that path
+                        currDist[u] = currDist[v] + this.adjacencyMatrix[v][u];
+                        previous[u] =v;
+                    }
+                }
+            }
+        }
+        
+        return traceRoute(previous, start, end);
     }
 }
