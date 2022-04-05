@@ -3,7 +3,7 @@ public class HashTable {
     private int capacity;
 
     public HashTable(int capacity) {
-        this.capacity = capacity + capacity;
+        this.capacity = capacity + capacity / 3;
         //increase the capacity t0 1.33 times its original size
 
         if(!isPrime(this.capacity)) {
