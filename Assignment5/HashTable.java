@@ -1,10 +1,16 @@
 public class HashTable {
     private String[] table;
     private int capacity;
+    private int actSize;
 
-    public HashTable(int capacity) {
-        this.capacity = capacity + capacity / 3;
-        //increase the capacity t0 1.33 times its original size
+    /**
+     * Constructor for HashTable class.
+     * @param size The number of items in the table
+     */
+    public HashTable(int size) {
+        this.actSize = 0;
+        this.capacity = (int) (1.4 * (double) size);
+        //increase the capacity to 1.4 * the number of items
 
         if(!isPrime(this.capacity)) {
             this.capacity = findPrime();
@@ -19,6 +25,11 @@ public class HashTable {
         }
     }
 
+    /**
+     * Helper method to check if a number is prime.
+     * @param size The current size of the hashmap.
+     * @return true if the size is prime, false otherwise.
+     */
     private boolean isPrime(int size) {
         /* prime number calculation adapted from https://www.tutorialspoint.com/java-program-to-check-for-prime-and-find-next-prime-in-java */
         
@@ -30,6 +41,11 @@ public class HashTable {
         return true;
     }
 
+    /**
+     * Helper method to calculate the nearest, larger prime number for a given integer.
+     * @param size The integer to find the next prime number for.
+     * @return The next larger prime number.
+     */
     private int findPrime() {
         /* prime number calculation adapted from https://www.tutorialspoint.com/java-program-to-check-for-prime-and-find-next-prime-in-java */
 
@@ -44,90 +60,59 @@ public class HashTable {
         return size;
     }
 
+    /**
+     * This method inserts an item into the HashMap.
+     * @param item the element to insert.
+     */
     public void insert(String item) {
         int spot = hashFunction(item);
+
         //use the hash function to find the spot to insert the item
         if(this.table[spot] != null) {
             spot = probe(spot);
             //if the spot is full, probe to find a new spot
         }
 
-        //System.out.println("Inserting " + item + " at " + spot + ".");
-
         table[spot] = item;
         //insert the item
+        this.actSize++;
+        //increment the size to keep track of how many elements are in the hashmap
     }
 
+    /**
+     * This is the Hash function for the HashMap.
+     * @param item The item to find a spot for in the map.
+     * @return The ideal spot for the item
+     */
     private int hashFunction(String item) {
-        /* ATTEMPT 5: 
-
-        /* ATTEMPT 4: djb2 -> 37.49% w/ lf of 74%. 49.99% w/ lf of 49.99% 
-        http://www.cse.yorku.ca/~oz/hash.html#:~:text=If%20you%20just%20want%20to,Also%20see%20tpop%20pp. */
+        //JENKINS ONE-AT-A-TIME HASH: https://en.wikipedia.org/wiki/Jenkins_hash_function 
+        int hash, i;
         char[] itemArray = item.toCharArray();
-        int hash = 0;
-        int c;
-        for(int i = 0; i < itemArray.length; i++) {
-            c = itemArray[i];
-            hash = (c + hash * 33) % this.capacity;
+
+        for(hash = i = 0; i < itemArray.length; i++) {
+            hash += itemArray[i];   //add the ascii value of the current char to the hash
+            hash += (hash << 10);   //shift the hash 10 bits to the right and add it to the current value
+            hash ^= (hash >> 6);    //shift the hash 6 bits to the left and XOR it with the current value
         }
 
-        return (int) hash;
+        hash += (hash << 3);    //shift the hash 3 bits to the right and add it to the current value
+        hash ^= (hash >> 11);   //shift the hash 11 bits to the left and XOR it with the current value
+        hash += (hash << 15);   //shift the hash 15 bits to the right and add it to the current value
 
+        hash %= this.capacity;  //ensure the hash is between 0 and capacity - 1
 
-        /* ATTEMPt 3: sdbm -> 37.49% 
-        char[] itemArray = item.toCharArray();
-        int hash = 0;
-        int c;
-        for(int i = 0; i < itemArray.length; i++) {
-            c = itemArray[i];
-            hash = Math.abs(c + hash * 65599);
+        if(hash < 0) {
+            hash += this.capacity;  //if the hash is negative, add the capacity to get it in the desired range
         }
 
-        return (int) hash % this.capacity;
-        
-        /* ATTEMPT 2: https://cseweb.ucsd.edu/~kube/cls/100/Lectures/lec16/lec16-15.html -> 37.48% 
-
-        char[]value = item.toCharArray();
-        int h = 0;
-		int off = 0;
-		char val[] = value;
-		int len = value.length;
- 
-		for (int i = 0; i < len; i++)
-	    h = 31*h + val[off++];
- 
-		return Math.abs(h) % this.capacity;
-
-        /* ATTEMPT 1: folding and adding -> only about 7.5% hash efficiency at best
-        char[] itemArray = item.toCharArray();
-        int size = itemArray.length;
-        if(size % 2 != 0) {
-            size++;
-        }
-
-        int[] asciiValues = new int[size];
-        for(int i = 0 ; i < size; i++) {
-            if(i < itemArray.length) {
-                asciiValues[i] = itemArray[i];
-            }
-            else {
-                asciiValues[i] = 0;
-            }
-        }
-
-        int sum = 0;
-        for(int i = 0; i + 1 < size; i += 2) {
-            sum += (asciiValues[i] * 100 + asciiValues[i + 1]) % this.capacity;
-        }
-
-        if(sum < 0 || sum >= this.capacity) {
-            sum = sum % this.capacity;
-        }
-
-        return sum;
-        */
+        return hash;
     }
 
+    /**
+     * Helper method to use linear probing if a spot is full.
+     * @param start The index of the table to begin probing
+     * @return the first open spot using linear probing
+     */
     private int probe(int start) {
         while(this.table[start] != null) {
             start = (start + 1) % this.capacity;
@@ -137,34 +122,58 @@ public class HashTable {
         return start;
     }
 
+    /**
+     * This method analyzes the performance of the HashMap in several different ways. 
+     * This inclues load factor, hash efficiency, average reads per record, and longest chain when searcing.
+     * @return a String containing the performance stats.
+     */
     public String analyzePerformance() {
-        int counter = 0;
+        double loadFactor = (double) this.actSize / (double) this.capacity;
+        //load factor is actual number of records / table capacity
+        
         int numReads = 0;
+        int longestChain = 0;
+        //numReads holds the total number of reads to access each element in the table
+        //longestChain holds the longest number of reads to access a single element
 
-        for(String item: this.table) {
-            if(item == null) {
-                counter++;
-                //counts the number of null spots
+        for(String each: this.table) {
+            if(each == null) {
+                continue;
+                //if the table element is empty, do nothing
             }
-            else {
-                numReads += find(item);
-                //counts the number of reads to find each object
+
+            int result = find(each);
+            //find the number of reads to get to the String
+
+            numReads += result;
+            if(result > longestChain) {
+                longestChain = result;
+                //if the number of reads to find the current element is longer than any previous search
+                    //overwrite the longestChain value
             }
         }
 
-        int numRecords = this.capacity - counter;   //number of records in the table
-        double loadFactor = (double)numRecords / this.capacity;    //load factor
-        double hashEfficiency = loadFactor / (numReads/numRecords);    //hash efficiency
-        System.out.println("Load factor is " + loadFactor + " or " + loadFactor * 100 + "%.\n");
-        System.out.println("Hash efficiency is " + hashEfficiency + " or " + hashEfficiency * 100 + "%.");
+        double readsPerRecord = (double) numReads / this.actSize;
+        //average number of reads/record is number of reads in total divided by number of records
 
+        double hashEfficiency = (double) (loadFactor / readsPerRecord);
+        //hash efficiency is load factor divided by avg reads per record
+        
         StringBuilder result = new StringBuilder();
-        result.append("Load factor is " + loadFactor + " or " + loadFactor * 100 + "%.\n");
-        result.append("Hash efficiency is " + hashEfficiency + " or " + hashEfficiency * 100 + "%.");
+        result.append("Average number of reads per record: " + readsPerRecord + "\n");
+        result.append("Load factor: " + loadFactor + " or " + loadFactor * 100 + "%\n");
+        result.append("Hashing efficiency: " + hashEfficiency + " or " + hashEfficiency * 100 + "%\n");
+        result.append("Longest chain when searching: " + longestChain + " reads");
+        //add all the information to a StringBuilder object
 
         return result.toString();
     }
 
+    /**
+     * This method searches for an item in the HashMap and returns the index it is found at.
+     * @param item The item to be searched for.
+     * @return The index the item is found at.
+     */
     public int find(String item) {
         int spot = hashFunction(item);
         //find the ideal spot for the item

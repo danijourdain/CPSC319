@@ -1,2 +1,4 @@
-Load factor is 0.499933894495615 or 49.9933894495615%.
-Hash efficiency is 0.499933894495615 or 49.9933894495615%.
+Average number of reads per record: 2.231576163610719
+Load factor: 0.7143127007115421 or 71.4312700711542%
+Hashing efficiency: 0.3200933548043347 or 32.00933548043347%
+Longest chain when searching: 54 reads

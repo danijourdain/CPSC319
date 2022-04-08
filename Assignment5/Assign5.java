@@ -1,6 +1,10 @@
 import java.io.*;
 
 public class Assign5 {
+    /**
+     * Main method for Assignment 5.
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) {
         if(args.length < 2 || args.length > 3) {
             System.out.println("Invalid number of command-line arguments. Promgram terminating.");
