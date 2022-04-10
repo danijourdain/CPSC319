@@ -1,4 +1,0 @@
-Average number of reads per record: 2.199
-Load factor: 0.7141836880445651 or 71.4183688044565%
-Hashing efficiency: 0.32477657482699646 or 32.47765748269965%
-Longest chain when searching: 49 reads
